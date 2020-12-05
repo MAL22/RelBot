@@ -1,0 +1,8 @@
+{
+  "db": {
+    "host":"localhost",
+    "user":"admin",
+    "pwd":"TBD",
+    "filename":"relbot-db"
+  }
+}

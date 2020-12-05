@@ -1,0 +1,11 @@
+{
+  "token_filename": "token",
+  "prefix": "$",
+  "delay_before_deleting": 10,
+  "emojis": {
+    "positive_id": 707119656514748437,
+    "negative_id": 707119669852635148,
+    "positive_emoji": "\u2705",
+    "negative_emoji": "\u274E"
+  }
+}
