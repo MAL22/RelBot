@@ -14,7 +14,7 @@ class ReputationCommand(Command):
             args = await self._parse_args(message)
             return await self.execute(message, *args)
         except Exception as e:
-            print(e)
+            await self.on_error(message, e)
             return None
 
     async def execute(self, message, *args):
@@ -96,3 +96,12 @@ class ReputationCommand(Command):
 
     def reload_config(self):
         pass
+
+    async def on_error(self, message, error):
+        embed_msg = discord.Embed(title=str(error), description='{0}'.format(self.template))
+        for argument in self.required_args:
+            embed_msg.add_field(name=argument['name'], value=argument['description'], inline=False)
+        for argument in self.optional_args:
+            embed_msg.add_field(name=argument['name'], value=argument['description'], inline=False)
+        await message.channel.send(embed=embed_msg, delete_after=self._app_config['delay_before_deleting'] * 5)
+        await message.delete(delay=self._app_config['delay_before_deleting'] * 5)
