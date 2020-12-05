@@ -1,0 +1,13 @@
+{
+	"enabled": true,
+	"name":"Reputation",
+	"commands": [
+		"reputation",
+		"rep"
+	],
+	"required_arguments": 0,
+	"optional_arguments": 1,
+	"automatic_removal": false,
+	"positive_id": 707119656514748437,
+    "negative_id": 707119669852635148
+}
