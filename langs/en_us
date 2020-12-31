@@ -1,0 +1,22 @@
+[Errors]
+MissingArgumentsSingular = Command {cmd_name} expects at least {num_expected_arguments} argument but {num_received_args} were given
+MissingArgumentsPlural = Command {cmd_name} expects at least {num_expected_arguments} arguments but {num_received_args} were given
+TooManyArgumentsSingular = Command {cmd_name} expects at most {num_expected_arguments} argument but {num_received_args} were given
+TooManyArgumentsPlural = Command {cmd_name} expects at most {num_expected_arguments} arguments but {num_received_args} were given
+MemberNotPresent = Member is not present on this server
+InvalidMemberID = Invalid member
+
+ReputationEmojisMissing = Positive and negative emojis are not configured or do not exist on this server. Please contact your administrator
+
+[Commands]
+ReputationCommandName = Reputation
+ReputationLongDesc = Displays the positive ({positive_emoji}) and negative ({negative_emoji}) reputation of a member
+ReputationShortDesc = ReputationShortDesc
+ReputationMemberParameterName = member
+ReputationMemberParameterDesc = Member ID
+
+HelpCommandName = Help, Bob
+HelpLongDesc = Displays usage help for commands
+HelpShortDesc = HelpShortDesc
+HelpCommandParameterName = Command name
+HelpCommandParameterDesc = Name of the command to display help for

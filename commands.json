@@ -1,17 +1,26 @@
 {
 	"reputation": {
 		"enabled": true,
-		"commands": ["reputation", "rep"],
-		"automatic_removal": true,
+		"hidden": false,
+		"aliases": ["reputation", "rep", "r"],
+		"automatic_removal": false,
 		"parameters": {
 			"positive_id": 707119656514748437,
 			"negative_id": 707119669852635148
 		}
 	},
 	"help": {
-		"enabled": false,
-		"commands": ["help", "?"],
-		"automatic_removal": true,
+		"enabled": true,
+		"hidden": false,
+		"aliases": ["help", "?", "h"],
+		"automatic_removal": false,
+		"parameters": {}
+	},
+	"secret_responses": {
+		"enabled": true,
+		"hidden": true,
+		"aliases": [],
+		"automatic_removal" : false,
 		"parameters": {}
 	}
 }

@@ -1,21 +1,23 @@
 import discord
 import relbot.json.json_reader as json_reader
-from relbot.commands.commands_tracker import CommandsTracker
-from relbot.app_config import GlobalAppConfig, GlobalCommandConfig
+from relbot.commands.command_tracker import CommandTracker
+from relbot.app_config import GlobalAppConfig, GlobalCommandConfig, JSONConfig, GlobalLanguageConfig
 from relbot.database.database_manager import DatabaseManager
 
 client = discord.Client()
 guild = discord.Guild
 database = DatabaseManager()
-app_cfg = GlobalAppConfig("config.json").config
+app_cfg = GlobalAppConfig("config.json")
 cmd_cfg = GlobalCommandConfig("commands.json").config
-commands_tracker = CommandsTracker(client)
+lng_cfg = GlobalLanguageConfig(app_cfg.language)
+app_info = JSONConfig("version").config
+commands_tracker = None
 
 
 @client.event
 async def on_message(message):
-    if message.author.bot:
-        return
+    # if message.author.bot:
+    #     return
     await commands_tracker.identify_command(message)
 
 
@@ -33,7 +35,11 @@ async def on_reaction_remove(reaction, user):
 
 @client.event
 async def on_ready():
-    print('Loaded Discord.py version {}'.format(discord.__version__))
-    print('We have logged in as {0.user}'.format(client))
+    global commands_tracker
+    commands_tracker = CommandTracker(client)
 
-client.run(json_reader.read(app_cfg['token_filename']))
+    print('Loaded Discord.py version {}'.format(discord.__version__))
+    print('Connected as {0.user}'.format(client))
+    print('RelBot version {0}{1}'.format(app_info['ver'], '-' + app_info['env']))
+
+client.run(json_reader.read('token'))
