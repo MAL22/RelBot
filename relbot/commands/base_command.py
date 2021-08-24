@@ -25,11 +25,6 @@ class ArgumentsMetadata:
         return self._optional_arguments
 
 
-class CommandInfo:
-    def __init__(self, name):
-        pass
-
-
 class BaseCommand(ABC):
     def __init__(self, client, internal_name, display_name, long_desc, short_desc, prefix_required=True, hidden=False, remove_output=False, arguments_metadata=ArgumentsMetadata()):
         self._app_config: GlobalAppConfig = GlobalAppConfig()
@@ -72,7 +67,7 @@ class BaseCommand(ABC):
         return self._hidden
 
     @abstractmethod
-    async def execute(self, message):
+    async def on_message(self, message):
         raise NotImplementedError
 
     @abstractmethod
@@ -81,10 +76,6 @@ class BaseCommand(ABC):
 
     @abstractmethod
     async def on_reaction_remove(self, reaction, user):
-        raise NotImplementedError
-
-    @abstractmethod
-    def reload_config(self):
         raise NotImplementedError
 
     @abstractmethod

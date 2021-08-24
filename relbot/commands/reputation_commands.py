@@ -23,7 +23,7 @@ class ReputationCommand(BaseCommand):
         self.negative_emoji: discord.Emoji = client.get_emoji(self._extra_parameters['negative_id'])
         self.long_desc = self.long_desc.format(positive_emoji=self.positive_emoji, negative_emoji=self.negative_emoji)
 
-    async def execute(self, message):
+    async def on_message(self, message):
         try:
             contains_prefix, command, args = split_arguments(message.content)
             user_id = await self._validate_args(message, *args)

@@ -7,7 +7,7 @@ class SecretResponses(BaseCommand):
         super().__init__(client, 'secret_responses', '', '', '', hidden=True)
         self._last_message = {}
 
-    async def execute(self, message):
+    async def on_message(self, message):
         if message.content != '':
             if message.channel.id not in self._last_message:
                 print(f'Adding message #{message.id} to entry for channel #{message.channel.id}')

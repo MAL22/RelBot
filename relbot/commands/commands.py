@@ -15,6 +15,11 @@ class CommandTracker(Singleton):
         commands = {}
         unique_commands = {}
         hidden_commands = {}
+        for cmd in BaseCommand.__subclasses__():
+            cmd: BaseCommand
+            print(cmd)
+            print(f'\t{cmd.internal_name}')
+
         for command in [cls(self.client) for cls in BaseCommand.__subclasses__()]:
             if command.hidden:
                 hidden_commands[command.internal_name] = command
@@ -37,11 +42,11 @@ class CommandTracker(Singleton):
 
             if (self._commands[command].prefix_required and not _has_prefix) or (not self._commands[command].prefix_required and _has_prefix):
                 return
-            await self._commands[command].execute(message)
+            await self._commands[command].on_message(message)
         except KeyError as e:
             print(e)
             for key, value in self._hidden_commands.items():
-                await value.execute(message)
+                await value.on_message(message)
 
     def get_command(self, name, refer_by_alias=True):
         try:

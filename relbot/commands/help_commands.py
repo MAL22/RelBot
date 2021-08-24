@@ -25,7 +25,7 @@ class HelpCommand(BaseCommand):
         __class = getattr(__module, _COMMAND_TRACKER_CLASS)
         self.commands_tracker = __class()
 
-    async def execute(self, message):
+    async def on_message(self, message):
         try:
             contains_prefix, command, args = split_arguments(message.content)
             command_help = await self._validate_args(message, *args)

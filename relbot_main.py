@@ -1,6 +1,6 @@
 import discord
 import relbot.json.json_reader as json_reader
-from relbot.commands.command_tracker import CommandTracker
+from relbot.commands.commands import CommandTracker
 from relbot.app_config import GlobalAppConfig, GlobalCommandConfig, JSONConfig, GlobalLanguageConfig
 from relbot.database.database_manager import DatabaseManager
 

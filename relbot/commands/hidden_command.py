@@ -7,7 +7,7 @@ class HiddenCommand(BaseCommand):
         super().__init__(client, name)
 
     @abstractmethod
-    async def execute(self, message):
+    async def on_message(self, message):
         raise NotImplementedError
 
     @abstractmethod
