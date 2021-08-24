@@ -1,0 +1,16 @@
+{
+	"enabled": true,
+	"name": "reputation",
+	"module": "relbot.commands.reputation",
+	"on_message_callback": "on_message",
+	"on_reaction_add_callback": null,
+	"on_reaction_remove_callback": null,
+	"prefix_required": true,
+	"hidden": false,
+	"aliases": ["reputation", "rep", "r"],
+	"automatic_removal": false,
+	"parameters": {
+		"positive_id": 707119656514748437,
+		"negative_id": 707119669852635148
+	}
+}

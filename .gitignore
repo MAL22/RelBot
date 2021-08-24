@@ -4,3 +4,4 @@ venv/
 token
 *.pyc
 *.pyo
+relbot-db

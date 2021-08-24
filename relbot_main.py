@@ -1,6 +1,6 @@
 import discord
 import relbot.json.json_reader as json_reader
-from relbot.commands.commands import CommandTracker
+from relbot.commands.commands import Commands
 from relbot.app_config import GlobalAppConfig, GlobalCommandConfig, JSONConfig, GlobalLanguageConfig
 from relbot.database.database_manager import DatabaseManager
 
@@ -11,32 +11,30 @@ app_cfg = GlobalAppConfig("config.json")
 cmd_cfg = GlobalCommandConfig("commands.json").config
 lng_cfg = GlobalLanguageConfig(app_cfg.language)
 app_info = JSONConfig("version").config
-commands_tracker = None
+commands: Commands = None
 
 
 @client.event
 async def on_message(message):
-    # if message.author.bot:
-    #     return
-    await commands_tracker.identify_command(message)
+    if message.author.bot:
+        return
+    await commands.identify_command(message)
 
 
 @client.event
 async def on_reaction_add(reaction, user):
-    for command in commands_tracker.commands:
-        await command.on_reaction_add(reaction, user)
+    await commands.on_reaction_add(reaction, user)
 
 
 @client.event
 async def on_reaction_remove(reaction, user):
-    for command in commands_tracker.commands:
-        await command.on_reaction_remove(reaction, user)
+    await commands.on_reaction_remove(reaction, user)
 
 
 @client.event
 async def on_ready():
-    global commands_tracker
-    commands_tracker = CommandTracker(client)
+    global commands
+    commands = Commands(client)
 
     print('Loaded Discord.py version {}'.format(discord.__version__))
     print('Connected as {0.user}'.format(client))
