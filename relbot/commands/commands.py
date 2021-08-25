@@ -22,12 +22,19 @@ class Commands(Singleton):
                 filepath = os.path.join(dirpath, filename)
                 command_config = json_reader.read(filepath)
                 command: Command = Command(discord.Client(), command_config)
-                commands[command.name] = command
-                if command.on_reaction_add:
+
+                if command.name not in commands:
+                    commands[command.name] = command
+                    print(f'Added {command} to {self}')
+                    for alias in command.aliases:
+                        if alias not in commands:
+                            commands[alias] = command
+                            print(f'Added {command} to {self}')
+
+                if hasattr(command, 'on_reaction_add'):
                     react_add_commands.append(command)
-                if command.on_reaction_remove:
+                if hasattr(command, 'on_reaction_remove'):
                     react_rem_commands.append(command)
-                print(f'Added {command} to {self}')
 
         return commands, list(commands.values()), react_add_commands, react_rem_commands
 
@@ -60,7 +67,6 @@ class Commands(Singleton):
     async def on_reaction_remove(self, reaction, user):
         for command in self.react_rem_commands:
             await command.on_reaction_remove(reaction, user)
-        pass
 
     def get_command(self, name, refer_by_alias=True):
         try:

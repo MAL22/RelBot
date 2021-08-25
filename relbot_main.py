@@ -4,7 +4,11 @@ from relbot.commands.commands import Commands
 from relbot.app_config import GlobalAppConfig, GlobalCommandConfig, JSONConfig, GlobalLanguageConfig
 from relbot.database.database_manager import DatabaseManager
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.members = True
+intents.reactions = True
+
+client = discord.Client(intents=intents)
 guild = discord.Guild
 database = DatabaseManager()
 app_cfg = GlobalAppConfig("config.json")
@@ -28,6 +32,7 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_reaction_remove(reaction, user):
+    print('ditched')
     await commands.on_reaction_remove(reaction, user)
 
 

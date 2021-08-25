@@ -18,9 +18,26 @@ class Command(BaseCommand):
         self.name = config['name']
         self.aliases = config['aliases']
 
-        self.on_message = None if not config['on_message_callback'] else getattr(module, config['on_message_callback'])
-        self.on_reaction_add = None if not config['on_reaction_add_callback'] else getattr(module, config['on_reaction_add_callback'])
-        self.on_reaction_remove = None if not config['on_reaction_remove_callback'] else getattr(module, config['on_reaction_remove_callback'])
+        try:
+            if config['callbacks']['on_reaction_add']:
+                self.on_message = getattr(module, config['callbacks']['on_message'])
+        except AttributeError as e:
+            print(e)
+            self.on_message = None
+
+        try:
+            if config['callbacks']['on_reaction_add']:
+                self.on_reaction_add = getattr(module, config['callbacks']['on_reaction_add'])
+        except AttributeError as e:
+            print(e)
+            self.on_reaction_add = None
+
+        try:
+            if config['callbacks']['on_reaction_add']:
+                self.on_reaction_remove = getattr(module, config['callbacks']['on_reaction_remove'])
+        except AttributeError as e:
+            print(e)
+            self.on_reaction_remove = None
 
     async def on_error(self, message, error):
         raise NotImplementedError
