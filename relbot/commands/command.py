@@ -16,25 +16,11 @@ class Command(BaseCommand):
         self.hidden = config['hidden']
 
         self.name = config['name']
+        self.aliases = config['aliases']
 
-        self._on_message_callback = getattr(module, config['on_message_callback'])
-        self._on_reaction_add_callback = getattr(module, config['on_reaction_add_callback'])
-        self._on_reaction_remove_callback = getattr(module, config['on_reaction_remove_callback'])
-
-    async def on_message(self, message):
-        if self._on_message_callback is None:
-            return
-        await self._on_message_callback(discord.Client(), message)
-
-    async def on_reaction_add(self, reaction, user):
-        if self._on_reaction_add_callback is None:
-            return
-        self._on_reaction_add_callback(discord.Client(), reaction, user)
-
-    async def on_reaction_remove(self, reaction, user):
-        if self._on_reaction_remove_callback is None:
-            return
-        self._on_reaction_remove_callback(reaction, user)
+        self.on_message = None if not config['on_message_callback'] else getattr(module, config['on_message_callback'])
+        self.on_reaction_add = None if not config['on_reaction_add_callback'] else getattr(module, config['on_reaction_add_callback'])
+        self.on_reaction_remove = None if not config['on_reaction_remove_callback'] else getattr(module, config['on_reaction_remove_callback'])
 
     async def on_error(self, message, error):
         raise NotImplementedError

@@ -10,10 +10,12 @@ from relbot.commands.command import Command
 class Commands(Singleton):
     def init(self, client, *args, **kwargs):
         self.client = client
-        self._commands, self._unique_commands = self._instantiate_commands()
+        self._commands, self._unique_commands, self.react_add_commands, self.react_rem_commands = self._instantiate_commands()
 
     def _instantiate_commands(self):
         commands = {}
+        react_add_commands = []
+        react_rem_commands = []
         print("instantiating...")
         for dirpath, dirnames, filenames in os.walk(os.path.realpath('./commands')):
             for filename in filenames:
@@ -21,31 +23,43 @@ class Commands(Singleton):
                 command_config = json_reader.read(filepath)
                 command: Command = Command(discord.Client(), command_config)
                 commands[command.name] = command
-                print(f'Added {command} to {commands}')
+                if command.on_reaction_add:
+                    react_add_commands.append(command)
+                if command.on_reaction_remove:
+                    react_rem_commands.append(command)
+                print(f'Added {command} to {self}')
 
-        return commands, list(commands.values())
+        return commands, list(commands.values()), react_add_commands, react_rem_commands
 
-    async def identify_command(self, message):
+    async def on_message(self, message):
         try:
             if message.content.startswith(GlobalAppConfig().prefix):
                 command = message.content.strip(GlobalAppConfig().prefix).split(' ')[0]
-                _has_prefix = True
+                has_prefix = True
             else:
                 command = message.content.split(' ')[0]
-                _has_prefix = False
+                has_prefix = False
 
-            if (self._commands[command].prefix_required and not _has_prefix) or (not self._commands[command].prefix_required and _has_prefix):
+            if self._commands[command].prefix_required and not has_prefix:
                 return
+            if not self._commands[command].prefix_required and has_prefix:
+                return
+            if not self._commands[command].on_message:
+                return
+            if not self._commands[command].enabled:
+                return
+
             await self._commands[command].on_message(message)
         except KeyError as e:
             print(e)
 
     async def on_reaction_add(self, reaction, user):
-        for command in self._unique_commands:
+        for command in self.react_add_commands:
             await command.on_reaction_add(reaction, user)
 
     async def on_reaction_remove(self, reaction, user):
-        print('reaction removed')
+        for command in self.react_rem_commands:
+            await command.on_reaction_remove(reaction, user)
         pass
 
     def get_command(self, name, refer_by_alias=True):

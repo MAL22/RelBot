@@ -18,7 +18,7 @@ commands: Commands = None
 async def on_message(message):
     if message.author.bot:
         return
-    await commands.identify_command(message)
+    await commands.on_message(message)
 
 
 @client.event
@@ -38,6 +38,6 @@ async def on_ready():
 
     print('Loaded Discord.py version {}'.format(discord.__version__))
     print('Connected as {0.user}'.format(client))
-    print('RelBot version {0}{1}'.format(app_info['ver'], '-' + app_info['env']))
+    print('RelBot version {0} {1}'.format(app_info['ver'], app_info['env']))
 
 client.run(json_reader.read('token'))
