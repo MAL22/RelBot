@@ -5,7 +5,6 @@
 	"prefix_required": true,
 	"hidden": false,
 	"aliases": ["?"],
-	"automatic_removal": false,
 	"parameters": {
 		"positive_id": 707119656514748437,
 		"negative_id": 707119669852635148

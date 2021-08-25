@@ -7,14 +7,11 @@ from relbot.app_config import GlobalLanguageConfig, GlobalCommandConfig
 
 
 class Command(BaseCommand):
-    def __init__(self, client: discord.Client, config):
+    def __init__(self, config):
         module = importlib.import_module(f"{config['module']}")
-
-        self._client = client
         self.enabled = config['enabled']
         self.prefix_required = config['prefix_required']
         self.hidden = config['hidden']
-
         self.name = config['name']
         self.aliases = config['aliases']
 

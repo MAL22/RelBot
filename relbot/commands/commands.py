@@ -1,5 +1,6 @@
 import os
 import discord
+from relbot.utils.logging import log
 from relbot.app_config import GlobalAppConfig
 from relbot.singleton import Singleton
 from relbot.json import json_reader
@@ -16,20 +17,19 @@ class Commands(Singleton):
         commands = {}
         react_add_commands = []
         react_rem_commands = []
-        print("instantiating...")
         for dirpath, dirnames, filenames in os.walk(os.path.realpath('./commands')):
             for filename in filenames:
                 filepath = os.path.join(dirpath, filename)
                 command_config = json_reader.read(filepath)
-                command: Command = Command(discord.Client(), command_config)
+                command: Command = Command(command_config)
 
                 if command.name not in commands:
                     commands[command.name] = command
-                    print(f'Added {command} to {self}')
+                    log(f'Added {command} to {self}')
                     for alias in command.aliases:
                         if alias not in commands:
                             commands[alias] = command
-                            print(f'Added {command} to {self}')
+                            log(f'Added {command} to {self}')
 
                 if hasattr(command, 'on_reaction_add'):
                     react_add_commands.append(command)
@@ -39,6 +39,7 @@ class Commands(Singleton):
         return commands, list(commands.values()), react_add_commands, react_rem_commands
 
     async def on_message(self, message):
+        log('commands tracker')
         try:
             if message.content.startswith(GlobalAppConfig().prefix):
                 command = message.content.strip(GlobalAppConfig().prefix).split(' ')[0]
@@ -55,10 +56,9 @@ class Commands(Singleton):
                 return
             if not self._commands[command].enabled:
                 return
-
-            await self._commands[command].on_message(message)
+            await self._commands[command].on_message(self.client, message)
         except KeyError as e:
-            print(e)
+            log(e)
 
     async def on_reaction_add(self, reaction, user):
         for command in self.react_add_commands:

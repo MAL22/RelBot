@@ -1,0 +1,14 @@
+{
+	"enabled": true,
+	"name": "reload",
+	"module": "relbot.commands.reload_commands",
+	"prefix_required": true,
+	"hidden": true,
+	"aliases": [],
+	"parameters": {},
+	"callbacks": {
+		"on_message": "on_message",
+		"on_reaction_add": null,
+		"on_reaction_remove": null
+	}
+}

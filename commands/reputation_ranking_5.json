@@ -1,17 +1,17 @@
 {
 	"enabled": true,
-	"name": "reputation",
-	"module": "relbot.commands.reputation",
+	"name": "toprep+",
+	"module": "relbot.commands.reputation_ranking",
 	"prefix_required": true,
 	"hidden": false,
-	"aliases": ["rep"],
+	"aliases": ["toprep+"],
 	"parameters": {
 		"positive_id": 707119656514748437,
 		"negative_id": 707119669852635148
 	},
 	"callbacks": {
 		"on_message": "on_message",
-		"on_reaction_add": "on_reaction_add",
-		"on_reaction_remove": "on_reaction_remove"
+		"on_reaction_add": null,
+		"on_reaction_remove": null
 	}
 }

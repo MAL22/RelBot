@@ -1,13 +1,45 @@
 import discord
+import inspect
 import relbot.json.json_reader as json_reader
+from relbot.utils.logging import log
+from relbot.commands import split_arguments
+from relbot.app_config import GlobalLanguageConfig
 from relbot.database.database_manager import DatabaseManager
 
 database_manager = DatabaseManager()
 command_config = json_reader.read('./commands/reputation.json')
 
 
-async def on_message(message: discord.Message):
-    await message.channel.send('testing')
+async def on_message(client: discord.Client, message: discord.Message):
+    positive_emoji: discord.Emoji = client.get_emoji(command_config['parameters']['positive_id'])
+    negative_emoji: discord.Emoji = client.get_emoji(command_config['parameters']['negative_id'])
+
+    try:
+        has_prefix, command, args = split_arguments(message.content)
+
+        if not args:
+            user_id = message.author.id
+        else:
+            user_id = int(args[0].strip('<@&!>'))
+
+    except ValueError as error:
+        log(error)
+    else:
+        log('Command: {} {}'.format("reputation", user_id))
+        user = database_manager.verify_user_exists(user_id)
+
+        if user is None:
+            database_manager.insert_user(user_id)
+            user = database_manager.verify_user_exists(user_id)
+        log(positive_emoji)
+        if positive_emoji is None or negative_emoji is None:
+            raise ValueError(GlobalLanguageConfig().config['Errors']['ReputationEmojisMissing'])
+
+        embed_msg = discord.Embed(title=GlobalLanguageConfig().config['Commands']['ReputationCommandName'], description='<@{0}>'.format(user[0]))
+        embed_msg.set_thumbnail(url=client.get_user(user[0]).avatar_url)
+        embed_msg.add_field(name=('<:{}:{}>'.format(positive_emoji.name, positive_emoji.id)), value=user[1], inline=True)
+        embed_msg.add_field(name=('<:{}:{}>'.format(negative_emoji.name, negative_emoji.id)), value=user[2], inline=True)
+        await message.channel.send(embed=embed_msg)
 
 
 async def on_reaction_add(reaction: discord.Reaction, user: discord.User):

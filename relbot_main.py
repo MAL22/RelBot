@@ -1,5 +1,6 @@
 import discord
 import relbot.json.json_reader as json_reader
+from relbot.utils.logging import log
 from relbot.commands.commands import Commands
 from relbot.app_config import GlobalAppConfig, GlobalCommandConfig, JSONConfig, GlobalLanguageConfig
 from relbot.database.database_manager import DatabaseManager
@@ -32,17 +33,17 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_reaction_remove(reaction, user):
-    print('ditched')
     await commands.on_reaction_remove(reaction, user)
 
 
 @client.event
 async def on_ready():
     global commands
+    log('Loaded Discord.py version {}'.format(discord.__version__))
+    log('Connected as {0.user}'.format(client))
+    log('RelBot version {0} {1}'.format(app_info['ver'], app_info['env']))
+
     commands = Commands(client)
 
-    print('Loaded Discord.py version {}'.format(discord.__version__))
-    print('Connected as {0.user}'.format(client))
-    print('RelBot version {0} {1}'.format(app_info['ver'], app_info['env']))
 
 client.run(json_reader.read('token'))

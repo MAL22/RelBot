@@ -1,5 +1,6 @@
 import sqlite3
 import relbot.json.json_reader
+from relbot.utils.logging import log
 from relbot.json import json_reader
 from relbot.singleton import Singleton
 
@@ -32,7 +33,7 @@ class DatabaseManager(Singleton):
         cur = self.connection.cursor()
 
         cur.execute(''' INSERT INTO `users` (`user_id`, `positive_relationship`, `negative_relationship`) VALUES (?, ?, ?) ''', (user_id, positive_rep, negative_rep))
-        print('Added entry {0}'.format(user_id))
+        log('Added entry {0}'.format(user_id))
 
         self.connection.commit()
         self._close_connection()
@@ -42,7 +43,7 @@ class DatabaseManager(Singleton):
         cur = self.connection.cursor()
 
         cur.execute(''' UPDATE `users` SET `positive_relationship` = ?, `negative_relationship` = ? WHERE `user_id` = ? ''', (positive_rep, negative_rep, user_id))
-        print('Updated entry {0}'.format(user_id))
+        log('Updated entry {0}'.format(user_id))
 
         self.connection.commit()
         self._close_connection()
