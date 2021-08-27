@@ -1,11 +1,10 @@
 import os
 import discord
-from relbot.utils.logging import log
-from relbot.app_config import GlobalAppConfig
-from relbot.singleton import Singleton
-from relbot.json import json_reader
-from relbot.commands.base_command import BaseCommand
-from relbot.commands.command import Command
+from jujube.utils.logging import log
+from jujube.app_config import GlobalAppConfig
+from jujube.singleton import Singleton
+from jujube.json import json_reader
+from jujube.commands.command import Command, CommandOptions
 
 
 class Commands(Singleton):
@@ -15,28 +14,29 @@ class Commands(Singleton):
 
     def _instantiate_commands(self):
         commands = {}
+        unique_commands = []
         react_add_commands = []
         react_rem_commands = []
-        for dirpath, dirnames, filenames in os.walk(os.path.realpath('./commands')):
+        for dirpath, dirnames, filenames in os.walk('./jujube/json/commands'):
             for filename in filenames:
                 filepath = os.path.join(dirpath, filename)
                 command_config = json_reader.read(filepath)
-                command: Command = Command(command_config)
+                command: Command = Command(CommandOptions(command_config))
+                unique_commands.append(command)
 
-                if command.name not in commands:
-                    commands[command.name] = command
-                    log(f'Added {command} to {self}')
-                    for alias in command.aliases:
-                        if alias not in commands:
-                            commands[alias] = command
-                            log(f'Added {command} to {self}')
+                for alias in command.params.commands:
+                    if alias in commands:
+                        log(f'Alias collision between {command} and {commands[alias]}')
+                    else:
+                        commands[alias] = command
+                        log(f'Added \'{alias}\' {command} to {self} from {filename}')
 
                 if hasattr(command, 'on_reaction_add'):
                     react_add_commands.append(command)
                 if hasattr(command, 'on_reaction_remove'):
                     react_rem_commands.append(command)
 
-        return commands, list(commands.values()), react_add_commands, react_rem_commands
+        return commands, unique_commands, react_add_commands, react_rem_commands
 
     async def on_message(self, message):
         log('commands tracker')
@@ -48,13 +48,13 @@ class Commands(Singleton):
                 command = message.content.split(' ')[0]
                 has_prefix = False
 
-            if self._commands[command].prefix_required and not has_prefix:
+            if self._commands[command].params.prefix_required and not has_prefix:
                 return
-            if not self._commands[command].prefix_required and has_prefix:
+            if not self._commands[command].params.prefix_required and has_prefix:
                 return
-            if not self._commands[command].on_message:
+            if not self._commands[command].params.on_message:
                 return
-            if not self._commands[command].enabled:
+            if not self._commands[command].params.enabled:
                 return
             await self._commands[command].on_message(self.client, message)
         except KeyError as e:
@@ -81,4 +81,4 @@ class Commands(Singleton):
         if refer_by_alias:
             return self._commands.items()
         else:
-            return self._unique_commands.items()
+            return self._unique_commands

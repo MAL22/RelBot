@@ -1,13 +1,14 @@
 import discord
+import os
 import inspect
-import relbot.json.json_reader as json_reader
-from relbot.utils.logging import log
-from relbot.commands import split_arguments
-from relbot.app_config import GlobalLanguageConfig
-from relbot.database.database_manager import DatabaseManager
+import jujube.json.json_reader as json_reader
+from jujube.utils.logging import log
+from jujube.commands import split_arguments
+from jujube.app_config import GlobalLanguageConfig
+from jujube.database.database_manager import DatabaseManager
 
 database_manager = DatabaseManager()
-command_config = json_reader.read('./commands/reputation.json')
+command_config = json_reader.read(os.path.realpath('./jujube/json/commands/reputation.json'))
 
 
 async def on_message(client: discord.Client, message: discord.Message):

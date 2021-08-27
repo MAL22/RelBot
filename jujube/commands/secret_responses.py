@@ -1,5 +1,5 @@
-# from relbot.commands.hidden_command import HiddenCommand
-from relbot.commands.base_command import BaseCommand
+# from jujube.commands.hidden_command import HiddenCommand
+from jujube.commands.base_command import BaseCommand
 
 
 class SecretResponses(BaseCommand):

@@ -1,15 +1,15 @@
 import sqlite3
-import relbot.json.json_reader
-from relbot.utils.logging import log
-from relbot.json import json_reader
-from relbot.singleton import Singleton
+import os
+from jujube.utils.logging import log
+from jujube.json import json_reader
+from jujube.singleton import Singleton
 
 CONFIG_NAME = 'db_cfg.json'
 
 
 class DatabaseManager(Singleton):
     def init(self, *args, **kwds):
-        self.config = json_reader.read(CONFIG_NAME)
+        self.config = json_reader.read(f'./{CONFIG_NAME}')
         self.verify_table_exists('users')
         self.connection = None
 

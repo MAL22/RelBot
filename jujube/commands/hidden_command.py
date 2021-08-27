@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from relbot.commands.base_command import BaseCommand
+from jujube.commands.base_command import BaseCommand
 
 
 class HiddenCommand(BaseCommand):

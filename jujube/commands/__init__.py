@@ -1,5 +1,5 @@
 import shlex
-from relbot.app_config import GlobalAppConfig
+from jujube.app_config import GlobalAppConfig
 
 
 def split_arguments(input_: str):

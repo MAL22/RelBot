@@ -1,8 +1,8 @@
-import relbot.json.json_reader as json_reader
+import jujube.json.json_reader as json_reader
 import configparser
 import json
 from json import JSONDecodeError
-from relbot.singleton import Singleton
+from jujube.singleton import Singleton
 
 
 class GlobalAppConfig(Singleton):

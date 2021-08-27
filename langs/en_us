@@ -15,7 +15,7 @@ ReputationShortDesc = ReputationShortDesc
 ReputationMemberParameterName = member
 ReputationMemberParameterDesc = Member ID
 
-HelpCommandName = Help, Bob
+HelpCommandName = Help
 HelpLongDesc = Displays usage help for commands
 HelpShortDesc = HelpShortDesc
 HelpCommandParameterName = Command name

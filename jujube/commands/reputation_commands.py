@@ -1,7 +1,7 @@
 import discord
-from relbot.commands.base_command import BaseCommand, ArgumentsMetadata
-from relbot.commands import split_arguments
-from relbot.app_config import GlobalLanguageConfig
+from jujube.commands.base_command import BaseCommand, ArgumentsMetadata
+from jujube.commands import split_arguments
+from jujube.app_config import GlobalLanguageConfig
 
 _COMMAND_NAME = "Reputation"
 
