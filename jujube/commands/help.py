@@ -1,12 +1,11 @@
 import discord
-from jujube.utils.logging import log
 from jujube.commands.commands import Commands
 from jujube.commands import split_arguments
 
 commands = Commands()
 
 
-async def on_message(client, message: discord.Message):
+async def on_message(client: discord.Client, message: discord.Message, *args):
     try:
         contains_prefix, command, args = split_arguments(message.content)
         command_help = commands.get_command(args[0])

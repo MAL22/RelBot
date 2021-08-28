@@ -1,15 +1,16 @@
 import os
-import discord
-from jujube.utils.logging import log
-from jujube.app_config import GlobalAppConfig
+import re
+from jujube.utils.debug.timer import measure_exec_time
+from jujube.utils.debug.logging import log
 from jujube.singleton import Singleton
 from jujube.json import json_reader
 from jujube.commands.command import Command, CommandOptions
 
 
 class Commands(Singleton):
-    def init(self, client, *args, **kwargs):
+    def init(self, client, prefix, *args, **kwargs):
         self.client = client
+        self.prefix = prefix
         self._commands, self._unique_commands, self.react_add_commands, self.react_rem_commands = self._instantiate_commands()
 
     def _instantiate_commands(self):
@@ -39,15 +40,11 @@ class Commands(Singleton):
         return commands, unique_commands, react_add_commands, react_rem_commands
 
     async def on_message(self, message):
-        log('commands tracker')
         try:
-            if message.content.startswith(GlobalAppConfig().prefix):
-                command = message.content.strip(GlobalAppConfig().prefix).split(' ')[0]
-                has_prefix = True
-            else:
-                command = message.content.split(' ')[0]
-                has_prefix = False
+            has_prefix, command, *args = self.get_args(message)
 
+            if command not in self._commands:
+                return
             if self._commands[command].params.prefix_required and not has_prefix:
                 return
             if not self._commands[command].params.prefix_required and has_prefix:
@@ -56,9 +53,13 @@ class Commands(Singleton):
                 return
             if not self._commands[command].params.enabled:
                 return
+
             await self._commands[command].on_message(self.client, message)
+
         except KeyError as e:
-            log(e)
+            log(__class__, e)
+        except NameError as e:
+            log(__class__, e)
 
     async def on_reaction_add(self, reaction, user):
         for command in self.react_add_commands:
@@ -82,3 +83,17 @@ class Commands(Singleton):
             return self._commands.items()
         else:
             return self._unique_commands
+
+    @measure_exec_time
+    def get_args(self, message) -> (bool, str, [str]):
+        command, *args = re.split('[ ]+', message.content)
+        has_prefix = False
+        if command.startswith(self.prefix):
+            has_prefix = True
+            command = command[1:]
+
+        log(has_prefix, command, *args)
+
+        return has_prefix, command, args
+
+

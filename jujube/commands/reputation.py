@@ -1,8 +1,7 @@
 import discord
 import os
-import inspect
 import jujube.json.json_reader as json_reader
-from jujube.utils.logging import log
+from jujube.utils.debug.logging import log
 from jujube.commands import split_arguments
 from jujube.app_config import GlobalLanguageConfig
 from jujube.database.database_manager import DatabaseManager
@@ -11,7 +10,7 @@ database_manager = DatabaseManager()
 command_config = json_reader.read(os.path.realpath('./jujube/json/commands/reputation.json'))
 
 
-async def on_message(client: discord.Client, message: discord.Message):
+async def on_message(client: discord.Client, message: discord.Message, *args):
     positive_emoji: discord.Emoji = client.get_emoji(command_config['parameters']['positive_id'])
     negative_emoji: discord.Emoji = client.get_emoji(command_config['parameters']['negative_id'])
 
@@ -23,8 +22,8 @@ async def on_message(client: discord.Client, message: discord.Message):
         else:
             user_id = int(args[0].strip('<@&!>'))
 
-    except ValueError as error:
-        log(error)
+    except ValueError as e:
+        log(__name__, e)
     else:
         log('Command: {} {}'.format("reputation", user_id))
         user = database_manager.verify_user_exists(user_id)
@@ -32,7 +31,7 @@ async def on_message(client: discord.Client, message: discord.Message):
         if user is None:
             database_manager.insert_user(user_id)
             user = database_manager.verify_user_exists(user_id)
-        log(positive_emoji)
+
         if positive_emoji is None or negative_emoji is None:
             raise ValueError(GlobalLanguageConfig().config['Errors']['ReputationEmojisMissing'])
 
