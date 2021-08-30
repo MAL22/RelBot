@@ -1,6 +1,4 @@
 import os
-import pathlib
-from .timer import measure_exec_time
 from datetime import datetime, timedelta
 from jujube import __title__ as TITLE
 
@@ -17,7 +15,6 @@ def generate_filename():
         for filename in filenames:
             file_path = os.path.join(dirpath, filename)
             file_ctime = datetime.fromtimestamp(os.path.getctime(file_path))
-            print(f'{file_ctime} < {datetime.now() - TIMEDELTA_LOG_OBSOLESCENCE}')
             if file_ctime < datetime.now() - TIMEDELTA_LOG_OBSOLESCENCE:
                 continue
             if log_file and file_ctime < datetime.fromtimestamp(os.path.getctime(log_file)):

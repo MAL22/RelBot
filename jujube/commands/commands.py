@@ -1,5 +1,7 @@
 import os
 import re
+import importlib
+import argparse
 from jujube.utils.debug.timer import measure_exec_time
 from jujube.utils.debug.logging import log
 from jujube.singleton import Singleton
@@ -38,6 +40,13 @@ class Commands(Singleton):
                     react_rem_commands.append(command)
 
         return commands, unique_commands, react_add_commands, react_rem_commands
+
+    def instantiate_test(self):
+        commands = {}
+        for dirpath, dirnames, filenames in os.walk('./jujube/json/commands'):
+            for filename in filenames:
+                pass
+
 
     async def on_message(self, message):
         try:
@@ -86,14 +95,17 @@ class Commands(Singleton):
 
     @measure_exec_time
     def get_args(self, message) -> (bool, str, [str]):
-        command, *args = re.split('[ ]+', message.content)
+        parser = argparse.ArgumentParser()
+        parser.add_argument()
+        log(re.split('[ \"]{0}([^\"]+)[ \"]{0}', message.content))
+        command, *args = re.split('[\"]*([^\"]+)[\"]*', message.content)
         has_prefix = False
         if command.startswith(self.prefix):
             has_prefix = True
             command = command[1:]
 
-        log(has_prefix, command, *args)
+        # log(has_prefix, command, *args)
+        for idx, arg in enumerate(args):
+            print(idx, ':', arg)
 
         return has_prefix, command, args
-
-

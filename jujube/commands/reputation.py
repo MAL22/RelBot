@@ -74,3 +74,5 @@ async def on_reaction_remove(reaction: discord.Reaction, user: discord.User):
             database_manager.insert_user(reaction.message.author.id, negative_rep=1)
         else:
             database_manager.update_user(reaction.message.author.id, author[1], author[2] - 1)
+
+
