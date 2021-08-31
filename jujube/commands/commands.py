@@ -41,16 +41,10 @@ class Commands(Singleton):
 
         return commands, unique_commands, react_add_commands, react_rem_commands
 
-    def instantiate_test(self):
-        commands = {}
-        for dirpath, dirnames, filenames in os.walk('./jujube/json/commands'):
-            for filename in filenames:
-                pass
-
-
     async def on_message(self, message):
         try:
-            has_prefix, command, *args = self.get_args(message)
+            has_prefix, command, args = self.get_args(message)
+            log(f'Command: {command} |', f'prefix: {has_prefix} |', f'args: {args}')
 
             if command not in self._commands:
                 return
@@ -93,19 +87,20 @@ class Commands(Singleton):
         else:
             return self._unique_commands
 
-    @measure_exec_time
     def get_args(self, message) -> (bool, str, [str]):
-        parser = argparse.ArgumentParser()
-        parser.add_argument()
-        log(re.split('[ \"]{0}([^\"]+)[ \"]{0}', message.content))
-        command, *args = re.split('[\"]*([^\"]+)[\"]*', message.content)
+        matches = re.findall('[\"]([^\"]*)[\"]?|([^\"][\\w]+[^\"])', message.content, re.I)
+        args = []
+        for grp1, grp2 in matches:
+            if grp2 == '':
+                args.append(grp1)
+            else:
+                args.append(grp2.strip(' '))
+        command = args.pop(0)
+        del matches
+
         has_prefix = False
         if command.startswith(self.prefix):
             has_prefix = True
             command = command[1:]
-
-        # log(has_prefix, command, *args)
-        for idx, arg in enumerate(args):
-            print(idx, ':', arg)
 
         return has_prefix, command, args
