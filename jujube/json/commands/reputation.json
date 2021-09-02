@@ -1,19 +1,15 @@
 {
 	"enabled": true,
 	"commands": ["reputation", "rep"],
-	"module": "jujube.commands.reputation",
+	"module": "jujube.commands.reputation_commands",
+	"class": "RepCommand",
 	"prefix_required": true,
 	"hidden": false,
 	"min_args": 0,
 	"max_args": 1,
 	"expected_args": "[User ID]",
 	"parameters": {
-		"positive_id": 707119656514748437,
-		"negative_id": 707119669852635148
-	},
-	"callbacks": {
-		"on_message": "on_message",
-		"on_reaction_add": "on_reaction_add",
-		"on_reaction_remove": "on_reaction_remove"
+		"emoji_positive": "\uD83D\uDC4D",
+		"emoji_negative": 707119669852635148
 	}
 }

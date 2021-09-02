@@ -1,78 +1,63 @@
 import discord
-import os
-import jujube.json.json_reader as json_reader
-from jujube.utils.debug.logging import log
+from jujube.commands.command import Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface, \
+    CommandOptions
 from jujube.commands import split_arguments
 from jujube.app_config import GlobalLanguageConfig
 from jujube.database.database_manager import DatabaseManager
-
-database_manager = DatabaseManager()
-command_config = json_reader.read(os.path.realpath('./jujube/json/commands/reputation.json'))
+from jujube.utils.debug.logging import log
 
 
-async def on_message(client: discord.Client, message: discord.Message, *args):
-    positive_emoji: discord.Emoji = client.get_emoji(command_config['parameters']['positive_id'])
-    negative_emoji: discord.Emoji = client.get_emoji(command_config['parameters']['negative_id'])
+class RepCommand(Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface):
+    def __init__(self, client, command_options: CommandOptions, **kwargs):
+        Command.__init__(self, client, command_options)
+        self.positive_emoji = self.fetch_emoji(kwargs.pop('emoji_positive', None))
+        self.negative_emoji = self.client.get_emoji(kwargs.pop('emoji_negative', None))
+        print(self.positive_emoji, self.negative_emoji)
 
-    try:
-        has_prefix, command, args = split_arguments(message.content)
-
-        if not args:
-            user_id = message.author.id
+    async def on_message(self, message, has_prefix: bool, command: str, *args, **kwargs):
+        try:
+            if not args:
+                user_id = message.author.id
+            else:
+                user_id = message.author.id
+        except ValueError as error:
+            log(error)
         else:
-            user_id = int(args[0].strip('<@&!>'))
+            print('Command: {} {}'.format(command, user_id))
+            user = DatabaseManager().verify_user_exists(user_id)
 
-    except ValueError as e:
-        log(__name__, e)
-    else:
-        log('Command: {} {}'.format("reputation", user_id))
-        user = database_manager.verify_user_exists(user_id)
+            if user is None:
+                DatabaseManager().insert_user(user_id)
+                user = DatabaseManager().verify_user_exists(user_id)
 
-        if user is None:
-            database_manager.insert_user(user_id)
-            user = database_manager.verify_user_exists(user_id)
+            if self.positive_emoji is None or self.negative_emoji is None:
+                raise ValueError(GlobalLanguageConfig().config['Errors']['emoji.missing'])
 
-        if positive_emoji is None or negative_emoji is None:
-            raise ValueError(GlobalLanguageConfig().config['Errors']['ReputationEmojisMissing'])
+            embed_msg = discord.Embed(title="test", description='<@{0}>'.format(user[0]))
+            embed_msg.set_thumbnail(url=self.client.get_user(user[0]).avatar_url)
+            embed_msg.add_field(name=('<:{}:{}>'.format(self.positive_emoji.name, self.positive_emoji.id)),
+                                value=user[1],
+                                inline=True)
+            embed_msg.add_field(name=('<:{}:{}>'.format(self.negative_emoji.name, self.negative_emoji.id)),
+                                value=user[2],
+                                inline=True)
 
-        embed_msg = discord.Embed(title=GlobalLanguageConfig().config['Commands']['ReputationCommandName'], description='<@{0}>'.format(user[0]))
-        embed_msg.set_thumbnail(url=client.get_user(user[0]).avatar_url)
-        embed_msg.add_field(name=('<:{}:{}>'.format(positive_emoji.name, positive_emoji.id)), value=user[1], inline=True)
-        embed_msg.add_field(name=('<:{}:{}>'.format(negative_emoji.name, negative_emoji.id)), value=user[2], inline=True)
-        await message.channel.send(embed=embed_msg)
+    async def on_reaction_add(self, reaction, user, *args, **kwargs):
+        print(reaction)
 
+    async def on_reaction_remove(self, reaction, user, *args, **kwargs):
+        pass
 
-async def on_reaction_add(reaction: discord.Reaction, user: discord.User):
-    if user == reaction.message.author:
-        return
-    author = database_manager.verify_user_exists(reaction.message.author.id)
-
-    if reaction.emoji.id == command_config['parameters']['positive_id']:
-        if author is None:
-            database_manager.insert_user(reaction.message.author.id, positive_rep=1)
-        else:
-            database_manager.update_user(reaction.message.author.id, author[1] + 1, author[2])
-    elif reaction.emoji.id == command_config['parameters']['negative_id']:
-        if author is None:
-            database_manager.insert_user(reaction.message.author.id, negative_rep=1)
-        else:
-            database_manager.update_user(reaction.message.author.id, author[1], author[2] + 1)
-
-
-async def on_reaction_remove(reaction: discord.Reaction, user: discord.User):
-    if user == reaction.message.author:
-        return
-    author = database_manager.verify_user_exists(reaction.message.author.id)
-
-    if reaction.emoji.id == command_config['parameters']['positive_id']:
-        if author is None:
-            database_manager.insert_user(reaction.message.author.id, positive_rep=1)
-        else:
-            database_manager.update_user(reaction.message.author.id, author[1] - 1, author[2])
-    elif reaction.emoji.id == command_config['parameters']['negative_id']:
-        if author is None:
-            database_manager.insert_user(reaction.message.author.id, negative_rep=1)
-        else:
-            database_manager.update_user(reaction.message.author.id, author[1], author[2] - 1)
-
+    def fetch_emoji(self, raw_emoji):
+        if isinstance(raw_emoji, int):
+            return self.client.get_emoji(raw_emoji)
+        try:
+            return self.client.get_emoji(int(raw_emoji))
+        except ValueError as error:
+            """ If this exception is triggered then the emoji is most likely a unicode emoji. """
+            return raw_emoji
+        except Exception as error:
+            """ Handle any unexpected errors. E.g. emoji doesn't exist """
+            log(error)
+            return None
 
