@@ -1,15 +1,15 @@
 {
 	"enabled": true,
 	"commands": ["reputation", "rep"],
-	"module": "jujube.commands.reputation_commands",
-	"class": "RepCommand",
+	"module": "jujube.commands.reputation",
+	"class": "ReputationCommand",
 	"prefix_required": true,
 	"hidden": false,
 	"min_args": 0,
 	"max_args": 1,
 	"expected_args": "[User ID]",
 	"parameters": {
-		"emoji_positive": "\uD83D\uDC4D",
+		"emoji_positive": "707119656514748437",
 		"emoji_negative": 707119669852635148
 	}
 }

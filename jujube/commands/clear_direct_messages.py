@@ -8,5 +8,5 @@ class ClearDirectMessages(Command, OnMessageInterface):
 
     async def on_message(self, message, has_prefix: bool, command: str, *args, **kwargs):
         async for message_ in message.author.history():
-            if message.author.id == self.client.user.id:
+            if message_.author.id == self.client.user.id:
                 await message_.delete()

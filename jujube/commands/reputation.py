@@ -7,7 +7,7 @@ from jujube.database.database_manager import DatabaseManager
 from jujube.utils.debug.logging import log
 
 
-class RepCommand(Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface):
+class ReputationCommand(Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface):
     def __init__(self, client, command_options: CommandOptions, **kwargs):
         Command.__init__(self, client, command_options)
         self.positive_emoji = self.fetch_emoji(kwargs.pop('emoji_positive', None))
@@ -41,6 +41,7 @@ class RepCommand(Command, OnMessageInterface, OnReactionAddInterface, OnReaction
             embed_msg.add_field(name=('<:{}:{}>'.format(self.negative_emoji.name, self.negative_emoji.id)),
                                 value=user[2],
                                 inline=True)
+            await message.channel.send(embed=embed_msg)
 
     async def on_reaction_add(self, reaction, user, *args, **kwargs):
         print(reaction)
