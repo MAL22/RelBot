@@ -98,7 +98,7 @@ class Commands(Singleton):
             return self._unique_commands
 
     def get_args(self, message) -> (bool, str, [str]):
-        matches = re.findall('["]([^"]*)["]?|([^"][\w]*[^" ])', message.content, re.I)
+        matches = re.findall('["]([^"]*)["]|([^"][^" ]*[^" ])', message.content, re.I)
         args = []
         for grp1, grp2 in matches:
             if grp2 == '':
