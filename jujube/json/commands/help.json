@@ -1,0 +1,12 @@
+{
+	"enabled": true,
+	"commands": ["help", "?"],
+	"module": "jujube.commands.help_commands",
+	"class": "HelpCommand",
+	"prefix_required": true,
+	"hidden": false,
+	"min_args": 0,
+	"max_args": 1,
+	"expected_args": "[command]",
+	"parameters": {}
+}

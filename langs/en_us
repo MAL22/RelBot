@@ -20,3 +20,4 @@ HelpLongDesc = Displays usage help for commands
 HelpShortDesc = HelpShortDesc
 HelpCommandParameterName = Command name
 HelpCommandParameterDesc = Name of the command to display help for
+HelpCommandNotifyUser = <@!{0}> a list of commands has been sent to you via a Direct Message.

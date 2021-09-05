@@ -1,7 +1,6 @@
 import discord
 from jujube.commands.command import Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface, \
     CommandOptions
-from jujube.commands import split_arguments
 from jujube.app_config import GlobalLanguageConfig
 from jujube.database.database_manager import DatabaseManager
 from jujube.utils.debug.logging import log
@@ -12,7 +11,6 @@ class ReputationCommand(Command, OnMessageInterface, OnReactionAddInterface, OnR
         Command.__init__(self, client, command_options)
         self.positive_emoji = self.fetch_emoji(kwargs.pop('emoji_positive', None))
         self.negative_emoji = self.client.get_emoji(kwargs.pop('emoji_negative', None))
-        print(self.positive_emoji, self.negative_emoji)
 
     async def on_message(self, message, has_prefix: bool, command: str, *args, **kwargs):
         try:

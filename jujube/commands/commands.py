@@ -6,7 +6,7 @@ from jujube.utils.debug.timer import measure_exec_time
 from jujube.utils.debug.logging import log
 from jujube.singleton import Singleton
 from jujube.json import json_reader
-from jujube.commands.command import Command, CommandOptions
+from jujube.commands.command import CommandOptions
 
 
 class Commands(Singleton):
@@ -93,7 +93,7 @@ class Commands(Singleton):
 
     def get_commands(self, refer_by_alias=True):
         if refer_by_alias:
-            return self._commands.items()
+            return self._commands
         else:
             return self._unique_commands
 

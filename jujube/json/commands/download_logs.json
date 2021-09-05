@@ -5,11 +5,5 @@
 	"class": "FetchLogs",
 	"prefix_required": true,
 	"hidden": true,
-	"min_args": 0,
-	"max_args": 0,
-	"expected_args": null,
-	"parameters": {
-		"emoji_positive": "\uD83D\uDC4D",
-		"emoji_negative": 707119669852635148
-	}
+	"parameters": {}
 }

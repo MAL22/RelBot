@@ -1,0 +1,14 @@
+{
+	"enabled": true,
+	"commands": ["mcinfo"],
+	"module": "jujube.commands.mc_server_info",
+	"class": "MinecraftServerInfo",
+	"prefix_required": true,
+	"hidden": true,
+	"min_args": 0,
+	"max_args": 0,
+	"parameters": {
+		"mc_port": 25565,
+		"ip_url": "https://api.ipify.org/"
+	}
+}

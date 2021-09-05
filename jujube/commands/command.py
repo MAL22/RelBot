@@ -11,9 +11,9 @@ class CommandOptions:
     def __init__(self, config: dict):
         self.module = importlib.import_module(config['module'])
         self.commands = config['commands']
-        self.min_args = config['min_args']
-        self.max_args = config['max_args']
-        self.expected_args = config['expected_args']
+        self.min_args = config.pop('min_args', 0)
+        self.max_args = config.pop('max_args', 0)
+        self.expected_args = config.pop('expected_args', "")
         self.enabled = config['enabled']
         self.prefix_required = config['prefix_required']
         self.hidden = config['hidden']

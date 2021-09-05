@@ -4,9 +4,6 @@
 	"module": "jujube.commands.clear_direct_messages",
 	"class": "ClearDirectMessages",
 	"prefix_required": true,
-	"hidden": true,
-	"min_args": 0,
-	"max_args": 0,
-	"expected_args": null,
+	"hidden": false,
 	"parameters": {}
 }
