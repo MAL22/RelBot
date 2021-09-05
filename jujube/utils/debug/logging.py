@@ -52,8 +52,7 @@ def log(*args, **kwargs):
         print(f'[{datetime.now().strftime(TIME_FORMAT)}]', *args)
         if omit_file:
             return
-        with open(os.path.join(FOLDER_PATH, filename), 'a', encoding="utf8") as file:
-            file.write(f'[{datetime.now().strftime(TIME_FORMAT)}] {" ".join(args)}\n')
+        print(f'[{datetime.now()}]', *args, file=open(os.path.join(FOLDER_PATH, filename), 'a', encoding="utf8"))
 
 
 _create_directory()
