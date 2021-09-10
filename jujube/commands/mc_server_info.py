@@ -1,5 +1,7 @@
 import urllib.request
 import discord
+
+from jujube.app_config import GlobalLanguageConfig
 from jujube.enums.color import Color
 from jujube.utils.debug.logging import log
 from jujube.commands.command import Command, OnMessageInterface, CommandOptions
@@ -15,6 +17,22 @@ class MinecraftServerInfo(Command, OnMessageInterface):
         else:
             self.ip = "127.0.0.1"
         self.mc_port = kwargs.pop('mc_port', 25565)
+
+    @property
+    def localized_name(self):
+        return GlobalLanguageConfig()['commands']['cmd_reputation_command_name']
+
+    @property
+    def localized_long_desc(self):
+        return GlobalLanguageConfig()['commands']['cmd_reputation_long_desc']
+
+    @property
+    def localized_short_desc(self):
+        return GlobalLanguageConfig()['commands']['cmd_reputation_short_desc']
+
+    @property
+    def command_template(self):
+        pass
 
     async def on_message(self, message, has_prefix: bool, command: str, *args, **kwargs):
         if self.ip == "127.0.0.1":

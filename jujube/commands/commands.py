@@ -1,8 +1,8 @@
 import os
 import re
 import importlib
-import argparse
-from jujube.utils.debug.timer import measure_exec_time
+import shlex
+
 from jujube.utils.debug.logging import log
 from jujube.singleton import Singleton
 from jujube.json import json_reader
@@ -21,7 +21,7 @@ class Commands(Singleton):
         react_add_commands = []
         react_rem_commands = []
         log('Parsing command json files...')
-        for dirpath, dirnames, filenames in os.walk('./jujube/json/commands'):
+        for dirpath, dirnames, filenames in os.walk('./commands'):
             for filename in filenames:
                 if re.match('([\w]+.[\w]+[.]+dis[\w]*)', filename):
                     log(f'skipped {filename}')
@@ -55,7 +55,7 @@ class Commands(Singleton):
             if message.author.bot:
                 return
 
-            has_prefix, command, args = self.get_args(message)
+            has_prefix, command, args = self.get_args(message.content)
             log(f'Command: {command} |', f'prefix: {has_prefix} |', f'args: {args}')
 
             if command not in self._commands:
@@ -67,7 +67,7 @@ class Commands(Singleton):
             if not self._commands[command].params.enabled:
                 return
 
-            await self._commands[command].on_message(message, has_prefix, command, *args)
+            await self._commands[command].on_message(message, *args)
 
         except KeyError as e:
             log(__class__, e)
@@ -98,7 +98,19 @@ class Commands(Singleton):
             return self._unique_commands
 
     def get_args(self, message) -> (bool, str, [str]):
-        matches = re.findall('["]([^"]*)["]|([^"][^" ]*[^" ])', message.content, re.I)
+        try:
+            command, *args = shlex.split(message)
+            contains_prefix = command.startswith(self.prefix)
+            if contains_prefix:
+                command = command.strip(self.prefix)
+        except ValueError as e:
+            print(type(e))
+            log("Ignoring message,", e)
+            return False, None, None
+        return contains_prefix, command, args
+
+    """def get_args(self, message) -> (bool, str, [str]):
+        matches = re.findall('["]([^"]*)["]|([^"][^" ]*[^" ])', message, re.I)
         args = []
         for grp1, grp2 in matches:
             if grp2 == '':
@@ -113,4 +125,4 @@ class Commands(Singleton):
             has_prefix = True
             command = command[1:]
 
-        return has_prefix, command, args
+        return has_prefix, command, args"""

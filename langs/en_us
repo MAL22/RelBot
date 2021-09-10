@@ -1,23 +1,22 @@
-[Errors]
-MissingArgumentsSingular = Command {cmd_name} expects at least {num_expected_arguments} argument but {num_received_args} were given
-MissingArgumentsPlural = Command {cmd_name} expects at least {num_expected_arguments} arguments but {num_received_args} were given
-TooManyArgumentsSingular = Command {cmd_name} expects at most {num_expected_arguments} argument but {num_received_args} were given
-TooManyArgumentsPlural = Command {cmd_name} expects at most {num_expected_arguments} arguments but {num_received_args} were given
-MemberNotPresent = Member is not present on this server
-InvalidMemberID = Invalid member
+[errors]
+error_missing_argument = Command {cmd_name} expects at least {num_expected_arguments} argument but {num_received_args} were given.
+error_missing_arguments = Command {cmd_name} expects at least {num_expected_arguments} arguments but {num_received_args} were given.
+error_too_many_arguments_singular = Command {cmd_name} expects at most {num_expected_arguments} argument but {num_received_args} were given.
+error_too_many_arguments_plural = Command {cmd_name} expects at most {num_expected_arguments} arguments but {num_received_args} were given.
+error_member_not_present = Member is not present on this server.
+error_invalid_member_id = Invalid member.
+error_reputation_emojis_missing = Positive and negative emojis are not configured or do not exist on this server. Please contact your administrator.
 
-ReputationEmojisMissing = Positive and negative emojis are not configured or do not exist on this server. Please contact your administrator
+[commands]
+cmd_reputation_command_name = Reputation
+cmd_reputation_long_desc = Displays the positive ({0.positive_emoji}) and negative ({0.negative_emoji}) reputation of a member.
+cmd_reputation_short_desc = ReputationShortDesc
+cmd_reputation_member_parameter_name = member
+cmd_reputation_member_param_desc = Member ID
 
-[Commands]
-ReputationCommandName = Reputation
-ReputationLongDesc = Displays the positive ({positive_emoji}) and negative ({negative_emoji}) reputation of a member
-ReputationShortDesc = ReputationShortDesc
-ReputationMemberParameterName = member
-ReputationMemberParameterDesc = Member ID
-
-HelpCommandName = Help
-HelpLongDesc = Displays usage help for commands
-HelpShortDesc = HelpShortDesc
-HelpCommandParameterName = Command name
-HelpCommandParameterDesc = Name of the command to display help for
-HelpCommandNotifyUser = <@!{0}> a list of commands has been sent to you via a Direct Message.
+cmd_help_command_name = Help
+cmd_help_long_desc = Displays usage help for commands
+cmd_help_short_desc = HelpShortDesc
+cmd_help_param_name = Command name
+cmd_help_param_desc = Name of the command to display help for
+cmd_help_notify_user = <@!{0}> a list of commands has been sent to you via a Direct Message.

@@ -50,6 +50,7 @@ class GlobalLanguageConfig(Singleton):
     def init(self, cfg_name, *args, **kwargs):
         self.__config = configparser.ConfigParser()
         self.__config.read(f'langs\\{cfg_name}')
+        return self.__config
 
     @property
     def config(self):

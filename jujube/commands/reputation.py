@@ -1,30 +1,71 @@
+import inspect
 import discord
+from jujube.utils.signature_deco import localize_annotations
+from jujube.utils.debug.timer import measure_exec_time
 from jujube.commands.command import Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface, \
-    CommandOptions
+    CommandOptions, CommandParameter
 from jujube.app_config import GlobalLanguageConfig
 from jujube.database.database_manager import DatabaseManager
 from jujube.utils.debug.logging import log
 
 
 class ReputationCommand(Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface):
+
+    expected_arguments = [CommandParameter(
+        GlobalLanguageConfig().config['commands']['cmd_reputation_member_parameter_name'],
+        GlobalLanguageConfig().config['commands']['cmd_reputation_member_param_desc'])
+    ]
+
+    params_loc_flag = True
+
     def __init__(self, client, command_options: CommandOptions, **kwargs):
         Command.__init__(self, client, command_options)
         self.positive_emoji = self.fetch_emoji(kwargs.pop('emoji_positive', None))
         self.negative_emoji = self.client.get_emoji(kwargs.pop('emoji_negative', None))
+        self._cmd_template_dirty = True
+        self._command_template = self.command_template
 
-    async def on_message(self, message, has_prefix: bool, command: str, *args, **kwargs):
+    @property
+    def localized_name(self):
+        return GlobalLanguageConfig().config['commands']['cmd_reputation_command_name']
+
+    @property
+    def localized_long_desc(self):
+        return GlobalLanguageConfig().config['commands']['cmd_reputation_long_desc'].format(self)
+
+    @property
+    def localized_short_desc(self):
+        return GlobalLanguageConfig().config['commands']['cmd_reputation_short_desc']
+
+    @property
+    @measure_exec_time
+    def command_template(self):
+        if self._cmd_template_dirty:
+            aliases = ", ".join(self.params.commands)
+            params = ""
+            sig = inspect.signature(self.on_message)
+            for param in list(sig.parameters.values())[1:len(sig.parameters) - 2]:
+                if param.default == inspect._empty:
+                    params += f'[{param.name}]'
+                else:
+                    params += f'<{param.name}>'
+            self._cmd_template_dirty = False
+            return f'({aliases}) {params}'
+        return self._command_template
+
+    @localize_annotations(params_loc_flag, [GlobalLanguageConfig().config['commands']['cmd_reputation_member_param_desc']])
+    async def on_message(self, message, user_id=0, *args, **kwargs):
         try:
-            if not args:
+            if not user_id:
                 user_id = message.author.id
             else:
-                user_id = int(args[0].strip('<@!>'))
+                user_id = int(user_id.strip('<@!>'))
         except ValueError as error:
             log(error)
         else:
             if not self.client.get_user(user_id):
                 return
 
-            print('Command: {} {}'.format(command, user_id))
             user = DatabaseManager().verify_user_exists(user_id)
 
             if user is None:
@@ -85,7 +126,7 @@ class ReputationCommand(Command, OnMessageInterface, OnReactionAddInterface, OnR
             """ If this exception is triggered then the emoji is most likely a unicode emoji. """
             return raw_emoji
         except Exception as error:
-            """ Handle any unexpected errors. E.g. emoji doesn't exist """
+            """ Handle any unexpected errors.loc. E.g. emoji doesn't exist """
             log(error)
             return None
 

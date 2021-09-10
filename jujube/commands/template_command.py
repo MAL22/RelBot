@@ -1,3 +1,4 @@
+from jujube.app_config import GlobalLanguageConfig
 from jujube.utils.debug.logging import log
 from jujube.commands.command import Command, OnReactionRemoveInterface, OnReactionAddInterface, OnMessageInterface, CommandOptions
 
@@ -6,7 +7,23 @@ class TemplateCommand(Command, OnMessageInterface, OnReactionAddInterface, OnRea
     def __init__(self, client, command_options: CommandOptions, **kwargs):
         Command.__init__(self, client, command_options)
 
-    async def on_message(self, message, has_prefix: bool, command: str, *args, **kwargs):
+    @property
+    def localized_name(self):
+        return GlobalLanguageConfig()['commands']['cmd_reputation_command_name']
+
+    @property
+    def localized_long_desc(self):
+        return GlobalLanguageConfig()['commands']['cmd_reputation_long_desc']
+
+    @property
+    def localized_short_desc(self):
+        return GlobalLanguageConfig()['commands']['cmd_reputation_short_desc']
+
+    async def on_message(self, message, *args, **kwargs):
+        pass
+
+    @property
+    def command_template(self):
         pass
 
     async def on_reaction_add(self, reaction, user, *args, **kwargs):
