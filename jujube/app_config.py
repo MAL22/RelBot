@@ -2,6 +2,8 @@ import jujube.json.json_reader as json_reader
 import configparser
 import json
 from json import JSONDecodeError
+from jujube.utils.map import Map
+from jujube.utils.debug.timer import measure_exec_time
 from jujube.singleton import Singleton
 
 
@@ -48,13 +50,13 @@ class GlobalCommandConfig(Singleton):
 
 class GlobalLanguageConfig(Singleton):
     def init(self, cfg_name, *args, **kwargs):
-        self.__config = configparser.ConfigParser()
-        self.__config.read(f'langs\\{cfg_name}')
-        return self.__config
+        self._config = configparser.ConfigParser()
+        self._config.read(f'langs\\{cfg_name}')
+        self._localization = Map({s: dict(self._config.items(s)) for s in self._config.sections()})
 
     @property
-    def config(self):
-        return self.__config
+    def localization(self):
+        return self._localization
 
 
 class JSONConfig:

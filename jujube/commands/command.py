@@ -1,8 +1,6 @@
-import os
-import inspect
-from abc import ABC, abstractmethod
 import discord
-import importlib
+from abc import ABC, abstractmethod
+from jujube.app_config import GlobalLanguageConfig
 from jujube.commands.base_command import BaseCommand
 
 
@@ -33,9 +31,12 @@ class CommandParameter:
 
 
 class Command(BaseCommand):
-    def __init__(self, client: discord.Client, command_options: CommandOptions):
+    def __init__(self, client: discord.Client, command_options: CommandOptions, localized_params=None):
+        BaseCommand.__init__(self)
         self.client = client
         self.params = command_options
+        self.localized_params = localized_params
+        self._loc = GlobalLanguageConfig().localization
 
     @property
     @abstractmethod

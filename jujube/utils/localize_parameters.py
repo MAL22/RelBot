@@ -6,8 +6,6 @@ def localize_annotations(dirty_flag, localized_strings):
     if not dirty_flag:
         return
 
-    print('its ya boy')
-
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -15,7 +13,6 @@ def localize_annotations(dirty_flag, localized_strings):
 
         sig = signature(func)
 
-        print(sig.parameters)
         new_params = [*list(sig.parameters.values())[0:2]]
 
         for idx, param in enumerate(list(sig.parameters.values())[2:len(sig.parameters) - 2]):

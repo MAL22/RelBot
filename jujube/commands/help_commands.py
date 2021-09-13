@@ -16,15 +16,15 @@ class HelpCommand(Command, OnMessageInterface):
 
     @property
     def localized_name(self):
-        return GlobalLanguageConfig()['commands']['cmd_reputation_command_name']
+        return self._loc.commands.cmd_reputation_command_name
 
     @property
     def localized_long_desc(self):
-        return GlobalLanguageConfig()['commands']['cmd_reputation_long_desc']
+        return self._loc.commands.commands.cmd_reputation_long_desc
 
     @property
     def localized_short_desc(self):
-        return GlobalLanguageConfig()['commands']['cmd_reputation_short_desc']
+        return self._loc.commands.cmd_reputation_short_desc
 
     @property
     def command_template(self):
@@ -55,4 +55,4 @@ class HelpCommand(Command, OnMessageInterface):
             await message.channel.send(embed=embed_msg)
         else:
             await message.author.send(embed=embed_msg)
-        await message.channel.send(GlobalLanguageConfig().config['Commands']['HelpCommandNotifyUser'].format(message.author.id))
+        await message.channel.send(GlobalLanguageConfig().localization['Commands']['HelpCommandNotifyUser'].format(message.author.id))

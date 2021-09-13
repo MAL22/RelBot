@@ -1,25 +1,20 @@
 import inspect
 import discord
-from jujube.utils.signature_deco import localize_annotations
+from jujube.utils.localize_parameters import localize_annotations
 from jujube.utils.debug.timer import measure_exec_time
+from jujube.utils.map import Map
 from jujube.commands.command import Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface, \
-    CommandOptions, CommandParameter
-from jujube.app_config import GlobalLanguageConfig
+    CommandOptions
 from jujube.database.database_manager import DatabaseManager
 from jujube.utils.debug.logging import log
 
 
 class ReputationCommand(Command, OnMessageInterface, OnReactionAddInterface, OnReactionRemoveInterface):
 
-    expected_arguments = [CommandParameter(
-        GlobalLanguageConfig().config['commands']['cmd_reputation_member_parameter_name'],
-        GlobalLanguageConfig().config['commands']['cmd_reputation_member_param_desc'])
-    ]
-
     params_loc_flag = True
 
     def __init__(self, client, command_options: CommandOptions, **kwargs):
-        Command.__init__(self, client, command_options)
+        Command.__init__(self, client, command_options, )
         self.positive_emoji = self.fetch_emoji(kwargs.pop('emoji_positive', None))
         self.negative_emoji = self.client.get_emoji(kwargs.pop('emoji_negative', None))
         self._cmd_template_dirty = True
@@ -27,15 +22,15 @@ class ReputationCommand(Command, OnMessageInterface, OnReactionAddInterface, OnR
 
     @property
     def localized_name(self):
-        return GlobalLanguageConfig().config['commands']['cmd_reputation_command_name']
+        return self._loc.commands.cmd_reputation_command_name
 
     @property
     def localized_long_desc(self):
-        return GlobalLanguageConfig().config['commands']['cmd_reputation_long_desc'].format(self)
+        return self._loc.commands.cmd_reputation_long_desc.format(self)
 
     @property
     def localized_short_desc(self):
-        return GlobalLanguageConfig().config['commands']['cmd_reputation_short_desc']
+        return self._loc.commands.cmd_reputation_short_desc
 
     @property
     @measure_exec_time
@@ -53,7 +48,7 @@ class ReputationCommand(Command, OnMessageInterface, OnReactionAddInterface, OnR
             return f'({aliases}) {params}'
         return self._command_template
 
-    @localize_annotations(params_loc_flag, [GlobalLanguageConfig().config['commands']['cmd_reputation_member_param_desc']])
+    # @localize_annotations(params_loc_flag, [['commands']['cmd_reputation_member_param_desc']])
     async def on_message(self, message, user_id=0, *args, **kwargs):
         try:
             if not user_id:
@@ -73,9 +68,9 @@ class ReputationCommand(Command, OnMessageInterface, OnReactionAddInterface, OnR
                 user = DatabaseManager().verify_user_exists(user_id)
 
             if self.positive_emoji is None or self.negative_emoji is None:
-                raise ValueError(GlobalLanguageConfig().config['Errors']['emoji.missing'])
+                raise ValueError(GlobalLanguageConfig().localization['Errors']['emoji.missing'])
 
-            embed_msg = discord.Embed(title=GlobalLanguageConfig().config['Commands']['ReputationCommandName'], description='<@{0}>'.format(user[0]))
+            embed_msg = discord.Embed(title=GlobalLanguageConfig().localization['Commands']['ReputationCommandName'], description='<@{0}>'.format(user[0]))
             embed_msg.set_thumbnail(url=self.client.get_user(user[0]).avatar_url)
             embed_msg.add_field(name=('<:{}:{}>'.format(self.positive_emoji.name, self.positive_emoji.id)),
                                 value=user[1],
