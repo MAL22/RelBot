@@ -7,7 +7,7 @@ from jujube.database.database_manager import DatabaseManager
 intents = discord.Intents.default()
 intents.members = True
 intents.reactions = True
-
+print('main')
 app_cfg = GlobalAppConfig("config.json")
 lng_cfg = GlobalLanguageConfig(app_cfg.language)
 

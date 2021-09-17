@@ -20,3 +20,7 @@ cmd_help_short_desc = HelpShortDesc
 cmd_help_param_name = Command name
 cmd_help_param_desc = Name of the command to display help for
 cmd_help_notify_user = <@!{0}> a list of commands has been sent to you via a Direct Message.
+
+cmd_mcserverinfo_name = cmd_mcserverinfo_name
+cmd_mcserverinfo_long_desc = cmd_mcserverinfo_long_desc
+cmd_mcserverinfo_short_desc = cmd_mcserverinfo_short_desc

@@ -16,19 +16,15 @@ class HelpCommand(Command, OnMessageInterface):
 
     @property
     def localized_name(self):
-        return self._loc.commands.cmd_reputation_command_name
+        return self._loc.commands.cmd_help_command_name
 
     @property
     def localized_long_desc(self):
-        return self._loc.commands.commands.cmd_reputation_long_desc
+        return self._loc.commands.commands.cmd_help_long_desc
 
     @property
     def localized_short_desc(self):
-        return self._loc.commands.cmd_reputation_short_desc
-
-    @property
-    def command_template(self):
-        pass
+        return self._loc.commands.cmd_help_short_desc
 
     async def on_message(self, message, *args, **kwargs):
         commands = self.client.commands.get_commands(False)
@@ -48,8 +44,8 @@ class HelpCommand(Command, OnMessageInterface):
         else:
             embed_msg = discord.Embed(title=command_help.command_template, description=command_help.localized_long_desc, color=Color.INDIGO)
             sig = inspect.signature(command_help.on_message)
-            for param in list(sig.parameters.values())[1:len(sig.parameters) - 2]:
-                embed_msg.add_field(name=param.name, value=param.annotation, inline=False)
+            for k, v in command_help.localized_params.items():
+                embed_msg.add_field(name=k, value=v, inline=False)
 
         if message.guild.id == 428918656697892885:
             await message.channel.send(embed=embed_msg)

@@ -23,7 +23,11 @@ class ClearDirectMessages(Command, OnMessageInterface):
     def command_template(self):
         pass
 
-    async def on_message(self, message, has_prefix: bool, command: str, *args, **kwargs):
+    @property
+    def localized_params(self):
+        pass
+
+    async def on_message(self, message, *args, **kwargs):
         async for message_ in message.author.history():
             if message_.author.id == self.client.user.id:
                 await message_.delete()

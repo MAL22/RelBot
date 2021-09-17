@@ -31,7 +31,11 @@ class FetchLogs(Command, OnMessageInterface):
     def command_template(self):
         pass
 
-    async def on_message(self, message, has_prefix: bool, command: str, *args, **kwargs):
+    @property
+    def localized_params(self):
+        pass
+
+    async def on_message(self, message, *args, **kwargs):
         if args and args[0] == '-zip':
             with ZipFile('logs.zip', 'w') as zip_file:
                 for dirpath, dirnames, filenames in os.walk(os.path.realpath(self.folder_path)):
