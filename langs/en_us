@@ -10,7 +10,7 @@ error_reputation_emojis_missing = Positive and negative emojis are not configure
 [commands]
 cmd_reputation_command_name = Reputation
 cmd_reputation_long_desc = Displays the positive ({0.positive_emoji}) and negative ({0.negative_emoji}) reputation of a member.
-cmd_reputation_short_desc = ReputationShortDesc
+cmd_reputation_short_desc = Displays the positive ({0.positive_emoji}) and negative ({0.negative_emoji}) reputation of a member.
 cmd_reputation_member_parameter_name = member
 cmd_reputation_member_param_desc = Member ID
 
@@ -24,3 +24,11 @@ cmd_help_notify_user = <@!{0}> a list of commands has been sent to you via a Dir
 cmd_mcserverinfo_name = cmd_mcserverinfo_name
 cmd_mcserverinfo_long_desc = cmd_mcserverinfo_long_desc
 cmd_mcserverinfo_short_desc = cmd_mcserverinfo_short_desc
+
+cmd_fetchlogs_name = cmd_fetchlogs_name
+cmd_fetchlogs_long_desc = cmd_fetchlogs_long_desc
+cmd_fetchlogs_short_desc = cmd_fetchlogs_short_desc
+
+cmd_cleardirectmessages_name = cmd_cleardirectmessages_name
+cmd_cleardirectmessages_long_desc = cmd_cleardirectmessages_long_desc
+cmd_cleardirectmessages_short_desc = cmd_cleardirectmessages_short_desc

@@ -1,0 +1,18 @@
+{
+	"enabled": true,
+	"commands": null,
+	"module": "jujube.commands.image_spam_command",
+	"class": "ImageSpamCommand",
+	"prefix_required": false,
+	"hidden": true,
+	"parameters": {
+		"blocklist": [
+			793958488132812821,
+			793951643397914624
+		],
+		"content_blocklist": [
+			"image/jpeg",
+			"image/png"
+		]
+	}
+}

@@ -1,11 +1,10 @@
-import inspect
 import os
 import re
 import importlib
 import shlex
 
 from jujube.utils.debug.logging import log
-from jujube.singleton import Singleton
+from jujube.utils.singleton import Singleton
 from jujube.json import json_reader
 from jujube.commands.command import CommandOptions
 
@@ -14,10 +13,15 @@ class Commands(Singleton):
     def init(self, client, prefix, *args, **kwargs):
         self.client = client
         self.prefix = prefix
-        self._commands, self._unique_commands, self.react_add_commands, self.react_rem_commands = self._instantiate_commands()
+        self._commands, self._quiet_commands, self._unique_commands, self.react_add_commands, self.react_rem_commands = self._instantiate_commands()
 
-    def _instantiate_commands(self):
+    @property
+    def commands(self):
+        return self._commands
+
+    def _instantiate_commands(self, reload=False):
         commands = {}
+        quiet_commands = []
         unique_commands = []
         react_add_commands = []
         react_rem_commands = []
@@ -27,29 +31,39 @@ class Commands(Singleton):
                 if re.match('([\w]+.[\w]+[.]+dis[\w]*)', filename):
                     log(f'skipped {filename}')
                     continue
-                filepath = os.path.join(dirpath, filename)
-                command_config = json_reader.read(filepath)
+                command_config = json_reader.read(os.path.join(dirpath, filename))
                 if not command_config['module'] or not command_config['class']:
-                    log(f'no module or class definition found in {filename}')
+                    log(f'No module or class definition found in {filename}')
                     continue
+
                 module = importlib.import_module(command_config['module'])
+                if reload:
+                    importlib.reload(module)
                 class_ = getattr(module, command_config['class'])
                 command = class_(self.client, CommandOptions(command_config), **command_config['parameters'])
                 unique_commands.append(command)
 
-                for alias in command.params.commands:
-                    if alias in commands:
-                        log(f'Alias collision between {command} and {commands[alias]}')
-                    else:
-                        commands[alias] = command
-                        log(f'Added \'{alias}\' {command} from {filename}')
+                if command.params.commands:
+                    for alias in command.params.commands:
+                        if alias in commands:
+                            log(f'Alias collision between {command} and {commands[alias]}')
+                        else:
+                            commands[alias] = command
+                            log(f'Added \'{alias}\' {command} from {filename}')
+                else:
+                    quiet_commands.append(command)
+                    log(f'Added {command} from {filename}')
 
                 if hasattr(command, 'on_reaction_add'):
                     react_add_commands.append(command)
                 if hasattr(command, 'on_reaction_remove'):
                     react_rem_commands.append(command)
 
-        return commands, unique_commands, react_add_commands, react_rem_commands
+        return commands, quiet_commands, unique_commands, react_add_commands, react_rem_commands
+
+    def reload_commands(self):
+        log('Reloading commands...')
+        self._commands, self._quiet_commands, self._unique_commands, self.react_add_commands, self.react_rem_commands = self._instantiate_commands(reload=True)
 
     async def on_message(self, message):
         try:
@@ -59,17 +73,18 @@ class Commands(Singleton):
             has_prefix, command, args = self.get_args(message.content)
             log(f'Command: {command} |', f'prefix: {has_prefix} |', f'args: {args}')
 
-            if command not in self._commands:
-                return
-            if self._commands[command].params.prefix_required and not has_prefix:
-                return
-            if not self._commands[command].params.prefix_required and has_prefix:
-                return
-            if not self._commands[command].params.enabled:
-                return
-
-            await self._commands[command].on_message(message, *args)
-
+            if command in self.commands:
+                if self._commands[command].params.prefix_required and not has_prefix:
+                    return
+                if not self._commands[command].params.prefix_required and has_prefix:
+                    return
+                if not self._commands[command].params.enabled:
+                    return
+                await self._commands[command].on_message(message, *args)
+            else:
+                """ Checking commands that do not have aliases. """
+                for command in self._quiet_commands:
+                    await command.on_message(message, *args)
         except KeyError as e:
             log(__class__, e)
         except NameError as e:
@@ -105,9 +120,8 @@ class Commands(Singleton):
             if contains_prefix:
                 command = command.strip(self.prefix)
         except ValueError as e:
-            print(type(e))
             log("Ignoring message,", e)
-            return False, None, None
+            return False, None, []
         return contains_prefix, command, args
 
     """def get_args(self, message) -> (bool, str, [str]):

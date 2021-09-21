@@ -1,0 +1,9 @@
+{
+	"enabled": true,
+	"commands": ["reload", "rel"],
+	"module": "jujube.commands.reload_commands",
+	"class": "ReloadCommands",
+	"prefix_required": true,
+	"hidden": true,
+	"parameters": {}
+}
