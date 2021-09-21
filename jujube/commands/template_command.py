@@ -22,10 +22,6 @@ class TemplateCommand(Command, OnMessageInterface, OnReactionAddInterface, OnRea
     async def on_message(self, message, *args, **kwargs):
         pass
 
-    @property
-    def command_template(self):
-        pass
-
     async def on_reaction_add(self, reaction, user, *args, **kwargs):
         pass
 
