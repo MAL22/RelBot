@@ -5,5 +5,6 @@
 	"class": "ReloadCommands",
 	"prefix_required": true,
 	"hidden": true,
+	"owner_only": true,
 	"parameters": {}
 }

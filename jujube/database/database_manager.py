@@ -1,7 +1,7 @@
 import sqlite3
 from jujube.utils.debug.logging import log
 from jujube.json import json_reader
-from jujube.singleton import Singleton
+from jujube.utils.singleton import Singleton
 
 CONFIG_NAME = 'db_cfg.json'
 

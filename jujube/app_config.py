@@ -4,7 +4,7 @@ import json
 from json import JSONDecodeError
 from jujube.utils.map import Map
 from jujube.utils.debug.timer import measure_exec_time
-from jujube.singleton import Singleton
+from jujube.utils.singleton import Singleton
 
 
 class GlobalAppConfig(Singleton):
@@ -15,6 +15,10 @@ class GlobalAppConfig(Singleton):
     @property
     def prefix(self):
         return self.__config['prefix']
+
+    @property
+    def owner_id(self):
+        return self.__config['owner_id']
 
     @prefix.setter
     def prefix(self, new_prefix):

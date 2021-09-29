@@ -7,10 +7,12 @@ from jujube.utils.debug.logging import log
 from jujube.utils.singleton import Singleton
 from jujube.json import json_reader
 from jujube.commands.command import CommandOptions
+from jujube.app_config import GlobalLanguageConfig, GlobalAppConfig
+from jujube.utils.exceptions import NotOwnerException, NotAllowedGuildException
 
 
 class Commands(Singleton):
-    def init(self, client, prefix, *args, **kwargs):
+    def init(self, client, prefix: str, *args, **kwargs):
         self.client = client
         self.prefix = prefix
         self._commands, self._quiet_commands, self._unique_commands, self.react_add_commands, self.react_rem_commands = self._instantiate_commands()
@@ -80,7 +82,9 @@ class Commands(Singleton):
                     return
                 if not self._commands[command].params.enabled:
                     return
-                await self._commands[command].on_message(message, *args)
+
+                    self._commands[command].verify_entitlements(message.author.id, message.channel.id, message.guild.id)
+                    await self._commands[command].on_message(message, *args)
             else:
                 """ Checking commands that do not have aliases. """
                 for command in self._quiet_commands:
@@ -89,6 +93,11 @@ class Commands(Singleton):
             log(__class__, e)
         except NameError as e:
             log(__class__, e)
+        except NotOwnerException as e:
+            await message.channel.send(GlobalLanguageConfig().localization.errors.error_not_owner_exception)
+            await message.delete()
+        except NotAllowedGuildException as e:
+            await message.channel.send(GlobalLanguageConfig().localization.errors.error_guild_not_allowed_exception)
 
     async def on_reaction_add(self, reaction, user):
         for command in self.react_add_commands:

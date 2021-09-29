@@ -1,6 +1,6 @@
 from jujube.app_config import GlobalLanguageConfig
 from jujube.utils.debug.logging import log
-from jujube.commands.command import Command, OnReactionRemoveInterface, OnReactionAddInterface, OnMessageInterface, CommandOptions
+from jujube.commands.command import Command, OnMessageInterface, CommandOptions
 
 
 class ClearDirectMessages(Command, OnMessageInterface):

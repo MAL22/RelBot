@@ -1,6 +1,5 @@
 import discord
 import jujube
-from jujube.utils.builder import BaseBuilder
 from jujube.app_config import GlobalAppConfig
 from jujube.commands.commands import Commands
 from jujube.utils.debug.logging import log
@@ -26,9 +25,20 @@ class JujubeClient(discord.Client):
     async def on_message(self, message):
         await self.commands.on_message(message)
 
+    async def on_message_edit(self, before, after):
+        pass
+
+    """ Reaction related event handlers """
+
     async def on_reaction_add(self, reaction, user):
         await self.commands.on_reaction_add(reaction, user)
 
+    async def on_raw_reaction_add(self, payload):
+        pass
+
     async def on_reaction_remove(self, reaction, user):
         await self.commands.on_reaction_remove(reaction, user)
+
+    async def on_raw_reaction_remove(self, payload):
+        pass
 

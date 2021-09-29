@@ -6,6 +6,8 @@ error_too_many_arguments_plural = Command {cmd_name} expects at most {num_expect
 error_member_not_present = Member is not present on this server.
 error_invalid_member_id = Invalid member.
 error_reputation_emojis_missing = Positive and negative emojis are not configured or do not exist on this server. Please contact your administrator.
+error_not_owner_exception = This command is only available to the creator of this bot.
+error_guild_not_allowed_exception = This command is not available on this server.
 
 [commands]
 cmd_reputation_command_name = Reputation

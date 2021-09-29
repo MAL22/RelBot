@@ -1,7 +1,6 @@
 import discord
 import inspect
 from jujube.commands.command import Command, CommandOptions, OnMessageInterface
-from jujube.commands import split_arguments
 from jujube.app_config import GlobalLanguageConfig
 from jujube.enums.color import Color
 from jujube.utils.debug.logging import log

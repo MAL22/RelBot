@@ -10,7 +10,6 @@ class UserInfractionInfo:
         self.flagged_messages = []
 
 
-
 class ImageSpamCommand(Command, OnMessageInterface):
     def __init__(self, client, command_options: CommandOptions, **kwargs):
         Command.__init__(self, client, command_options)

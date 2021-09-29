@@ -1,24 +1,29 @@
-import ctypes
 import inspect
-from collections import namedtuple
 from typing import List
 
 import discord
 from abc import ABC, abstractmethod
 from jujube.app_config import GlobalLanguageConfig
+from jujube.app_config import GlobalAppConfig
 from jujube.commands.base_command import BaseCommand
+from jujube.utils.exceptions import NotOwnerException, NotAllowedGuildException
 
 
 class CommandOptions:
     def __init__(self, config: dict):
-        self.commands = config['commands']
+        self.enabled = config.pop('enabled', False)
+        self.commands = config.pop('commands', None)
+        self.prefix_required = config.pop('prefix_required', True)
+        self.hidden = config.pop('hidden', False)
+        self.owner_only = config.pop('owner_only', False)
+        self.allowed_guilds = config.pop('allowed_guilds', [])
+        self.blocked_guilds = config.pop('blocked_guilds', [])
+        self.requires_role = config.pop('requires_role', [])
         self.min_args = config.pop('min_args', 0)
         self.max_args = config.pop('max_args', 0)
-        self.expected_args = config.pop('expected_args', "")
-        self.enabled = config['enabled']
-        self.prefix_required = config['prefix_required']
-        self.hidden = config['hidden']
-        self.parameters = config['parameters']
+        self.expected_args = config.pop('expected_args', None)
+        self.optional_args = config.pop('optional_args', None)
+        self.parameters = config.get('parameters', {})
 
 
 class Command(BaseCommand):
@@ -29,19 +34,22 @@ class Command(BaseCommand):
         self._loc = GlobalLanguageConfig().localization
 
     @property
-    @abstractmethod
     def localized_name(self):
-        raise NotImplementedError
+        return ""
 
     @property
-    @abstractmethod
     def localized_long_desc(self):
-        raise NotImplementedError
+        return ""
 
     @property
-    @abstractmethod
     def localized_short_desc(self):
-        raise NotImplementedError
+        return ""
+
+    def verify_entitlements(self, user_id, channel_id, guild_id):
+        if self.params.owner_only and user_id != GlobalAppConfig().owner_id:
+            raise NotOwnerException
+        if self.params.blocked_guilds and guild_id in self.params.blocked_guilds:
+            raise NotAllowedGuildException
 
 
 class OnMessageInterface(ABC):
@@ -67,14 +75,22 @@ class OnReactionAddInterface(ABC):
     async def on_reaction_add(self, reaction, user, *args, **kwargs):
         raise NotImplementedError
 
+    @abstractmethod
+    async def on_raw_reaction_add(self, reaction, user, *args, **kwargs):
+        raise NotImplementedError
+
 
 class OnReactionRemoveInterface(ABC):
     @abstractmethod
     async def on_reaction_remove(self, reaction, user, *args, **kwargs):
         raise NotImplementedError
 
+    @abstractmethod
+    async def on_raw_reaction_remove(self, reaction, user, *args, **kwargs):
+        raise NotImplementedError
 
-class OnReady(ABC):
+
+class OnReadyInterface(ABC):
     @abstractmethod
     async def on_ready(self, *args, **kwargs):
         raise NotImplementedError

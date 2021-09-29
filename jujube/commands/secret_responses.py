@@ -1,10 +1,9 @@
-# from jujube.commands.hidden_command import HiddenCommand
 from jujube.commands.base_command import BaseCommand
 
 
 class SecretResponses(BaseCommand):
     def __init__(self, client):
-        super().__init__(client, 'secret_responses', '', '', '', hidden=True)
+        BaseCommand.__init__(client)
         self._last_message = {}
 
     async def on_message(self, message):
@@ -27,18 +26,3 @@ class SecretResponses(BaseCommand):
 
             if 'ayy' in message.content:
                 await message.channel.send('lmao')
-
-    async def on_reaction_add(self, reaction, user):
-        pass
-
-    async def on_reaction_remove(self, reaction, user):
-        pass
-
-    async def on_error(self, message, error):
-        pass
-
-    async def _validate_args(self, message, *args):
-        pass
-
-    def reload_config(self):
-        pass
