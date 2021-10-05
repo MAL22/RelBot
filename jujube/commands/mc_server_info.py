@@ -32,6 +32,7 @@ class MinecraftServerInfo(Command, OnMessageInterface):
         return self._loc.commands.cmd_mcserverinfo_short_desc
 
     async def on_message(self, message, *args, **kwargs):
+        print('hi')
         if self.ip == "127.0.0.1":
             raise Exception('Invalid IP!')
         embed_msg = discord.Embed(title="Minecraft Server Info", color=Color.INDIGO)

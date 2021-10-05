@@ -83,8 +83,8 @@ class Commands(Singleton):
                 if not self._commands[command].params.enabled:
                     return
 
-                    self._commands[command].verify_entitlements(message.author.id, message.channel.id, message.guild.id)
-                    await self._commands[command].on_message(message, *args)
+                self._commands[command].verify_entitlements(message.author.id, message.channel.id, message.guild.id)
+                await self._commands[command].on_message(message, *args)
             else:
                 """ Checking commands that do not have aliases. """
                 for command in self._quiet_commands:

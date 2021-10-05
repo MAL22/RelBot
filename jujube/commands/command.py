@@ -75,9 +75,9 @@ class OnReactionAddInterface(ABC):
     async def on_reaction_add(self, reaction, user, *args, **kwargs):
         raise NotImplementedError
 
-    @abstractmethod
+    """@abstractmethod
     async def on_raw_reaction_add(self, reaction, user, *args, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError"""
 
 
 class OnReactionRemoveInterface(ABC):
@@ -85,9 +85,9 @@ class OnReactionRemoveInterface(ABC):
     async def on_reaction_remove(self, reaction, user, *args, **kwargs):
         raise NotImplementedError
 
-    @abstractmethod
+    """@abstractmethod
     async def on_raw_reaction_remove(self, reaction, user, *args, **kwargs):
-        raise NotImplementedError
+        raise NotImplementedError"""
 
 
 class OnReadyInterface(ABC):
