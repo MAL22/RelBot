@@ -1,5 +1,5 @@
 import inspect
-from typing import List
+from typing import List, Dict
 
 import discord
 from abc import ABC, abstractmethod
@@ -66,7 +66,7 @@ class OnMessageInterface(ABC):
         return self._command_template
 
     @property
-    def localized_params(self) -> dict[str, str]:
+    def localized_params(self) -> Dict[str, str]:
         return self._localized_params
 
 
@@ -112,7 +112,7 @@ def generate_command_template(commands, func) -> str:
     return f'{aliases} {params}'
 
 
-def init_localized_params(func, string_keys: List[str]) -> dict[str, str]:
+def init_localized_params(func, string_keys: List[str]) -> Dict[str, str]:
     localized_params = {}
     sig = inspect.signature(func)
     for idx, param in enumerate(list(sig.parameters.values())[1:len(sig.parameters) - 2]):
